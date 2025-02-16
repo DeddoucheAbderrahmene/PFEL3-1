@@ -1,23 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import HotelOfferCard from "../components/HotelOfferCard";
-
-// Vérification des variables d'environnement
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-  throw new Error("NEXT_PUBLIC_SUPABASE_URL est manquant dans .env.local");
-}
-if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY est manquant dans .env.local");
-}
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from "@/lib/supabase"; // Import du client configuré
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import HotelOfferCard from "@/components/HotelOfferCard";
 
 export default function HotelsPage() {
   const [hotels, setHotels] = useState([]);
@@ -92,7 +79,10 @@ export default function HotelsPage() {
             <div className="bg-white/30 backdrop-blur-md rounded-xl p-6 shadow-2xl">
               <form className="flex flex-col sm:flex-row items-center gap-4">
                 <div className="w-full">
-                  <label htmlFor="destination" className="text-blue-200 font-medium">
+                  <label
+                    htmlFor="destination"
+                    className="text-blue-200 font-medium"
+                  >
                     Où allez-vous ?
                   </label>
                   <input
@@ -104,7 +94,10 @@ export default function HotelsPage() {
                 </div>
 
                 <div className="w-full">
-                  <label htmlFor="arrivee-date" className="text-blue-200 font-medium">
+                  <label
+                    htmlFor="arrivee-date"
+                    className="text-blue-200 font-medium"
+                  >
                     Date d'arrivée
                   </label>
                   <input
@@ -141,22 +134,7 @@ export default function HotelsPage() {
 
       <Footer />
 
-      <style jsx>{`
-        @keyframes fadeInOut {
-          0% {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          50% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-        }
-      `}</style>
+     
     </div>
   );
 }

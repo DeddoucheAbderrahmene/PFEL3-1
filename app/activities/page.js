@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import HotelOfferCard from "../components/HotelOfferCard";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import HotelOfferCard from "@/components/HotelOfferCard";
 
 const colors = [
   { r: 0, g: 217, b: 255 },   // Bleu

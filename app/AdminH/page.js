@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import HeaderAdminH from "../components/HeaderAdminH";
-import Footer from "../components/Footer";
+import HeaderAdminH from "@/components/HeaderAdminH";
+import Footer from "@/components/Footer";
 
 // Composant pour afficher un message popup
 const PopupMessage = ({ message, onClose }) => (

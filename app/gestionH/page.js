@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import HeaderAdminH from "../components/HeaderAdminH";
-import Footer from "../components/Footer";
+import HeaderAdminH from "@/components/HeaderAdminH";
+import Footer from "@/components/Footer";
 
 // Fonction d'upload d'image vers Supabase Storage (si vous utilisez un bucket "hotels-images")
 const uploadImage = async (hotelName, file) => {
@@ -443,6 +443,7 @@ const GestionHPage = () => {
     if (hotels.length > 0) {
       const currentHotel = hotels[0];
       const fetchOffers = async () => {
+        
         const { data: offersData, error: offersError } = await supabase
           .from("hotel_offers")
           .select("*")
@@ -715,16 +716,12 @@ const GestionHPage = () => {
                   <span className="ml-4 text-blue-900">
                     📍 {hotel.location} - {hotel.wilaya}
                   </span>
+
                 </div>
-                {hotel.images && (
-                  <div className="mt-4">
-                    <img
-                      src={supabase.storage.from('hotels-images').getPublicUrl(hotel.images).publicURL}
-                      alt="Image de l'hôtel"
-                      className="w-full rounded"
-                    />
-                  </div>
-                )}
+                
+                {hotels.map((hotel) => (
+
+<div key={hotel.hotel_id}> <h3>{hotel.name}</h3> <img src={hotel.images} alt="Image de l'hôtel" className="w-full rounded" /> </div> ))}
               </div>
             ))}
           </div>

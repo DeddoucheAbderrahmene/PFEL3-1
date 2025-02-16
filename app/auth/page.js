@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import Header from "../components/Header";  // Assurez-vous que ces chemins sont corrects
-import Footer from "../components/Footer";
+import Header from "@/components/Header";  // Assurez-vous que ces chemins sont corrects
+import Footer from "@/components/Footer";
 
 export default function AuthPage() {
   const router = useRouter();
