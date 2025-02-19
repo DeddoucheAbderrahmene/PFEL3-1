@@ -1,8 +1,11 @@
 import React from "react";
 
 export default function Footer() {
+  console.log("Footer rendered");
   return (
+    
     <footer className="bg-gray-800 text-white">
+      
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
@@ -22,25 +25,42 @@ export default function Footer() {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="self-center text-2xl font-semibold whitespace-nowrap font-mono uppercase">TripDzAir</span>
+              <span className="self-center text-2xl font-semibold whitespace-nowrap font-mono uppercase">
+                TRIPDZAIR
+              </span>
             </a>
           </div>
-          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4">
             <div>
               <h2 className="mb-6 text-sm font-semibold text-gray-300 uppercase">Resources</h2>
               <ul className="font-medium">
-                <li className="mb-4"><a href="/" className="hover:underline">Home</a></li>
-                <li><a href="/hotels" className="hover:underline">Hotels</a></li>
-                <li><a href="/restaurants" className="hover:underline">Restaurants</a></li>
-                <li><a href="/activities" className="hover:underline">Activities</a></li>
+                <li className="mb-4">
+                  <a href="/" className="hover:underline">Home</a>
+                </li>
+                <li className="mb-4">
+                  <a href="/hotels" className="hover:underline">Hotels</a>
+                </li>
+                <li className="mb-4">
+                  <a href="/restaurants" className="hover:underline">Restaurants</a>
+                </li>
+                <li className="mb-4">
+                  <a href="/activities" className="hover:underline">Activitie</a>
+                </li>
+                
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-300 uppercase">Je suis </h2>
+              <h2 className="mb-6 text-sm font-semibold text-gray-300 uppercase">Je suis</h2>
               <ul className="font-medium">
-                <li className="mb-4"><a href="/AdminH" className="hover:underline">admin hotel </a></li>
-                <li><a href="#" className="hover:underline">guide touristique</a></li>
-                <li><a href="#" className="hover:underline">Instagram</a></li>
+                <li className="mb-4">
+                  <a href="/AdminH" className="hover:underline">admin hotel</a>
+                </li>
+                <li className="mb-4">
+                  <a href="#" className="hover:underline">guide touristique</a>
+                </li>
+                <li className="mb-4">
+                  <a href="/ajouterRest" className="hover:underline">Ajouter un restaurant</a>
+                </li>
               </ul>
             </div>
             <div>
@@ -63,7 +83,9 @@ export default function Footer() {
         </div>
         <hr className="my-6 border-gray-700 sm:mx-auto lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
-          <span className="text-sm text-gray-400 sm:text-center">© 2025 TripDzAir. All Rights Reserved.</span>
+          <span className="text-sm text-gray-400 sm:text-center">
+            © 2025 TRIPDZAIR. All Rights Reserved.
+          </span>
         </div>
       </div>
     </footer>

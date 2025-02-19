@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import RestaurantCard from "@/components/Restaurantscard";
 
 const RestaurantsPage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fullPhrase = "TROUVER VOTRE RESTAURANT";
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         const { data, error } = await supabase
-          .from('restaurants')
+          .from("restaurants")
           .select(`
             restaurant_id,
             name,
@@ -27,7 +30,7 @@ const RestaurantsPage = () => {
             phone_number,
             opening_hours
           `)
-          .order('star_rating', { ascending: false });
+          .order("star_rating", { ascending: false });
 
         if (error) throw error;
         setRestaurants(data);
@@ -41,96 +44,132 @@ const RestaurantsPage = () => {
     fetchRestaurants();
   }, []);
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
-  );
+  const getColor = (percentage) => {
+    const colors = [
+      { r: 0, g: 217, b: 255 },
+      { r: 148, g: 0, b: 211 },
+      { r: 255, g: 0, b: 106 },
+      { r: 255, g: 69, b: 0 },
+    ];
+    const index = Math.floor(percentage * (colors.length - 1));
+    const { r, g, b } = colors[index];
+    return `rgb(${r}, ${g}, ${b})`;
+  };
 
-  if (error) return (
-    <div className="text-center py-8 text-red-500">
-      Erreur de chargement : {error}
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center py-8 text-red-500">
+        Erreur de chargement : {error}
+      </div>
+    );
+
+  // Filtrer les restaurants par nom ou location
+  const filteredRestaurants = restaurants.filter((restaurant) => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      restaurant.name.toLowerCase().includes(lowerSearch) ||
+      restaurant.location.toLowerCase().includes(lowerSearch)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      <div className="relative h-96 bg-gray-900 text-white">
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-          <h1 className="text-4xl md:text-6xl font-bold text-center px-4">
-            Découvrez les Meilleurs Restaurants
-          </h1>
-        </div>
-      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard 
-              key={restaurant.restaurant_id} 
-              restaurant={restaurant} 
-            />
-          ))}
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
-};
-
-const RestaurantCard = ({ restaurant }) => {
-  const renderRatingStars = () => {
-    const rating = restaurant.star_rating || 0;
-    return [...Array(5)].map((_, index) => (
-      <span
-        key={index}
-        className={`text-xl ${
-          index < Math.floor(rating)
-            ? 'text-yellow-400'
-            : 'text-gray-300'
-        }`}
-      >
-        ★
-      </span>
-    ));
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105">
-      <div className="relative h-48">
+      {/* Section Hero */}
+      <div className="relative w-full h-[500px] overflow-hidden">
+        {/* Image de fond principale */}
         <img
-          src={restaurant.images || '/default-restaurant.jpg'}
-          alt={restaurant.name}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '/default-restaurant.jpg';
-          }}
+          src="https://www.oran-memoire.fr/wp-content/uploads/AFcvGhidNp8hHGoHN0O9A.jpg"
+          alt="Fond Restaurant"
+          className="absolute z-0 w-full h-full object-cover"
         />
-        <div className="absolute bottom-2 right-2 bg-black/90 px-3 py-1 rounded-full text-sm font-semibold text-white">
-          ⭐ {restaurant.star_rating?.toFixed(1) || 'N/A'}
+
+        {/* Overlay avec image additionnelle et texte */}
+        <div className="absolute inset-0 flex items-center justify-center px-4">
+          {/* Image supplémentaire en arrière-plan */}
+          <img
+            src="https://source.unsplash.com/random/800x600?food"
+            alt="Image de fond pour la phrase"
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
+          />
+          {/* Overlay sombre */}
+          <div className="absolute inset-0 bg-black/30"></div>
+          {/* Texte animé */}
+          <div className="relative flex justify-center whitespace-nowrap">
+            {fullPhrase.split("").map((char, i) => (
+              <span
+                key={i}
+                className="font-bold text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
+                style={{
+                  animation: `fadeInOut 2s ${i * 0.1}s infinite`,
+                  textShadow: `0 0 10px ${getColor(i / (fullPhrase.length - 1))},
+                               0 0 20px ${getColor(i / (fullPhrase.length - 1))},
+                               0 0 30px ${getColor(i / (fullPhrase.length - 1))}`,
+                }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">{restaurant.name}</h2>
-        <div className="flex items-center mb-3">
-          <span className="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded mr-2">
-            {restaurant.cuisine_type || 'Cuisine non spécifiée'}
-          </span>
-          <span className="text-gray-600 text-sm">📍 {restaurant.location}</span>
+      {/* Barre de recherche personnalisée */}
+      <div className="flex justify-center my-8">
+        <div className="relative w-[480px] bg-gray-100 rounded-2xl shadow-md p-1.5 transition-all duration-150 ease-in-out hover:scale-105 hover:shadow-lg">
+          {/* Icône de recherche */}
+          <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+            <svg
+              className="h-5 w-5 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </div>
+          {/* Input de recherche */}
+          <input
+            type="text"
+            className="w-full pl-8 pr-24 py-3 text-base text-gray-700 bg-transparent rounded-lg focus:outline-none"
+            placeholder="Recherche par nom ou location"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {/* Bouton de recherche avec hauteur ajustée */}
+         
         </div>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-          {restaurant.description || 'Aucune description disponible'}
-        </p>
-        <Link href={`/restaurantsaff/${restaurant.restaurant_id}`}>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-            Voir les détails
-          </button>
-        </Link>
       </div>
+
+      {/* Affichage des restaurants filtrés */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {filteredRestaurants.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredRestaurants.map((restaurant) => (
+              <RestaurantCard
+                key={restaurant.restaurant_id}
+                restaurant={restaurant}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-700">Aucun restaurant trouvé.</p>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 };

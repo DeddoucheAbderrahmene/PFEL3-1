@@ -1,0 +1,245 @@
+"use client";
+
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import Header from '@/components/Header';
+
+const AddRestaurantPage = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    name: '',
+    location: '',
+    cuisine_type: '',
+    description: '',
+    phone_number: '',
+    opening_hours: '',
+    star_rating: 3,
+  });
+  const [mainImage, setMainImage] = useState(null);
+  const [menuImage, setMenuImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const sanitizeFileName = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+  
+    try {
+      // Vérifier l'authentification
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (!user || authError) {
+        throw new Error('Vous devez être connecté pour ajouter un restaurant');
+      }
+  
+      // Validation
+      if (!formData.name || !mainImage || !menuImage) {
+        throw new Error('Tous les champs obligatoires doivent être remplis');
+      }
+  
+      // Préparation du chemin de stockage
+      const sanitizedName = sanitizeFileName(formData.name);
+      const folderPath = `Restaurants_photos/${user.id}/${sanitizedName}/`;
+  
+      // Upload de l'image principale
+      const mainExt = mainImage.name.split('.').pop();
+      const mainImagePath = `${folderPath}main.${mainExt}`;
+      
+      const { error: mainError } = await supabase.storage
+        .from('Restaurants_photos')
+        .upload(mainImagePath, mainImage);
+  
+      if (mainError) throw new Error(`Erreur upload image : ${mainError.message}`);
+  
+      // Upload de l'image du menu
+      const menuExt = menuImage.name.split('.').pop();
+      const menuImagePath = `${folderPath}menu.${menuExt}`;
+  
+      const { error: menuError } = await supabase.storage
+        .from('Restaurants_photos')
+        .upload(menuImagePath, menuImage);
+  
+      if (menuError) throw new Error(`Erreur upload menu : ${menuError.message}`);
+  
+      // Récupération des URLs
+      const { data: { publicUrl: mainImageUrl } } = supabase.storage
+        .from('Restaurants_photos')
+        .getPublicUrl(mainImagePath);
+  
+      const { data: { publicUrl: menuImageUrl } } = supabase.storage
+        .from('Restaurants_photos')
+        .getPublicUrl(menuImagePath);
+  
+      // Insertion dans la base de données
+      const { error: dbError } = await supabase
+  .from('restaurants')
+  .insert([{
+    ...formData,
+    owner_id: user.id, // Champ requis
+    images: mainImageUrl,
+    menu: menuImageUrl,
+    restaurant_id: crypto.randomUUID() // Génération côté client
+  }]);
+      if (dbError) throw dbError;
+  
+      router.push('/restaurants');
+    } catch (err) {
+      setError(err.message);
+      console.error('Erreur complète :', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+  <Header />
+  
+  <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 className="text-3xl font-bold mb-8 text-gray-900">Ajouter un nouveau restaurant</h1>
+    
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <div className="p-4 bg-red-100 text-red-700 rounded-lg border-2 border-red-200">
+          {error}
+        </div>
+      )}
+
+      {/* Champ nom */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Nom du restaurant *
+        </label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg 
+                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                   transition-all text-gray-900 bg-white"
+          required
+        />
+      </div>
+
+      {/* Image principale */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Image principale *
+        </label>
+        <div className="flex items-center gap-4 p-2 border-2 border-gray-400 rounded-lg bg-white">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setMainImage(e.target.files[0])}
+            className="block w-full text-sm text-gray-900
+                     file:mr-4 file:py-2 file:px-4 
+                     file:rounded-lg file:border-2 file:border-gray-400
+                     file:text-gray-900 file:bg-gray-100 
+                     hover:file:bg-gray-200 file:transition-colors"
+            required
+          />
+        </div>
+        <p className="text-sm text-gray-500 mt-1">Formats acceptés: JPG, PNG, WEBP</p>
+      </div>
+
+      {/* Image du menu */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Image du menu *
+        </label>
+        <div className="flex items-center gap-4 p-2 border-2 border-gray-400 rounded-lg bg-white">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setMenuImage(e.target.files[0])}
+            className="block w-full text-sm text-gray-900
+                     file:mr-4 file:py-2 file:px-4 
+                     file:rounded-lg file:border-2 file:border-gray-400
+                     file:text-gray-900 file:bg-gray-100 
+                     hover:file:bg-gray-200 file:transition-colors"
+            required
+          />
+        </div>
+        <p className="text-sm text-gray-500 mt-1">Photo/scan du menu (format image)</p>
+      </div>
+
+      {/* Autres champs */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Adresse
+        </label>
+        <input
+          type="text"
+          name="location"
+          value={formData.location}
+          onChange={handleInputChange}
+          className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg 
+                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                   transition-all text-gray-900 bg-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Type de cuisine
+        </label>
+        <input
+          type="text"
+          name="cuisine_type"
+          value={formData.cuisine_type}
+          onChange={handleInputChange}
+          className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg 
+                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                   transition-all text-gray-900 bg-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Description
+        </label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg 
+                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                   transition-all text-gray-900 bg-white"
+          rows="4"
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg 
+                 hover:bg-blue-700 disabled:bg-gray-400 transition-colors 
+                 font-semibold text-lg border-2 border-blue-700"
+      >
+        {loading ? 'Envoi en cours...' : 'Ajouter le restaurant'}
+      </button>
+    </form>
+  </main>
+</div>
+  );
+};
+
+export default AddRestaurantPage;
