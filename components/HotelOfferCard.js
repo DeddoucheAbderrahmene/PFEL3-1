@@ -34,12 +34,12 @@ const HotelOfferCard = ({ hotel }) => {
           <div className="flex flex-col items-center gap-6">
             <div className="relative flex h-74 w-74 items-center justify-center rounded-2xl bg-white p-2">
               <img
-                src={hotel.images || "/default-hotel.jpg"}
+                src={hotel.images}
                 alt={hotel.name}
                 className="h-60 w-65 rounded-xl object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "/default-hotel.jpg";
+                 
                 }}
               />
             </div>

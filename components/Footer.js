@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Footer() {
-  console.log("Footer rendered");
+
   return (
     
     <footer className="bg-gray-800 text-white">
@@ -60,6 +60,10 @@ export default function Footer() {
                 </li>
                 <li className="mb-4">
                   <a href="/ajouterRest" className="hover:underline">Ajouter un restaurant</a>
+                </li>
+              
+                <li className="mb-4">
+                  <a href="/ajouteract" className="hover:underline">Ajouter une activité</a>
                 </li>
               </ul>
             </div>
