@@ -1,22 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { supabase } from '@/lib/supabase';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    fetchUser();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileMenuOpen && !e.target.closest('.profile-menu')) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [profileMenuOpen]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setProfileMenuOpen(false);
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <nav className="bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 border-gray-200 dark:bg-gray-800 shadow-lg">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"> {/* Reduced back to p-4 for small screens */}
-        <Link href="/" className="flex items-center space-x-2"> {/* Reduced space-x */}
-          {/* Logo */}
+    <nav className="bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 border-gray-200 shadow-lg relative z-50">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        {/* Logo et nom du site */}
+        <Link href="/" className="flex items-center space-x-2">
           <svg
-            className="w-8 h-8 text-white"  // Reduced size
+            className="w-8 h-8 text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             width="48"
@@ -30,13 +64,13 @@ const Header = () => {
               clipRule="evenodd"
             />
           </svg>
-          <span className="self-center text-xl font-bold text-white tracking-wider font-mono uppercase">  {/* Reduced font size */}
+          <span className="self-center text-xl font-bold text-white tracking-wider font-mono uppercase">
             TripDzAir
           </span>
         </Link>
 
-        <div className="flex md:order-2 space-x-2 items-center"> {/* Reduced space-x */}
-          {/*  Mes Reservations Button */}
+        <div className="flex md:order-2 space-x-2 items-center">
+          {/* Icône Réservations */}
           <Link
             href="/reservations"
             title="Mes réservations"
@@ -44,7 +78,7 @@ const Header = () => {
             className="flex items-center justify-center p-0 text-white hover:bg-gray-700 rounded-full transition-colors duration-200"
           >
             <svg
-              className="w-6 h-6 text-gray-100 dark:text-white" // Reduced size
+              className="w-6 h-6 text-gray-100"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -62,15 +96,58 @@ const Header = () => {
             </svg>
           </Link>
 
-          {/* Get Started Button */}
-          <Link href="/auth" passHref>
-            <button
-              type="button"
-              className="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-xs px-3 py-2 transition-all duration-300 ease-in-out" // Reduced font size and padding
-            >
-              Get started
-            </button>
-          </Link>
+          {/* Gestion utilisateur */}
+          {user ? (
+            <div className="relative profile-menu">
+              <button 
+                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                className="flex items-center space-x-1 text-white hover:bg-gray-700 px-3 py-2 rounded-lg transition-colors"
+              >
+                <span className="hidden sm:inline">
+                  {user.email?.split('@')[0] || 'Mon compte'}
+                </span>
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                  />
+                </svg>
+              </button>
+
+              {profileMenuOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Déconnexion
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/auth" passHref>
+              <button
+                type="button"
+                className="text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-xs px-3 py-2 transition-all duration-300 ease-in-out"
+              >
+                Get started
+              </button>
+            </Link>
+          )}
+
+          {/* Bouton menu mobile */}
           <button
             onClick={toggleMenu}
             type="button"
@@ -97,56 +174,57 @@ const Header = () => {
           </button>
         </div>
 
+        {/* Menu principal */}
         <div
           className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
             isMenuOpen ? "block mt-2" : "hidden"
           }`}
           id="navbar-cta"
         >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 md:flex-row md:mt-0 md:border-0">
             <li>
               <Link
                 href="/"
-                className="block py-2 px-3 md:p-0 text-white bg-gray-700 rounded-lg md:bg-transparent md:text-gray-300 hover:text-gray-100 dark:text-white md:dark:text-gray-400 relative group transition-colors duration-200"
+                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
               >
                 Home
-                 <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 md:group-hover:scale-x-100"></span>
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </li>
             <li>
               <Link
                 href="/hotels"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 dark:text-white dark:hover:bg-gray-700 relative group transition-colors duration-200"
+                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
               >
                 Hotels
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 md:group-hover:scale-x-100"></span>
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </li>
             <li>
               <Link
                 href="/restaurant"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 dark:text-white dark:hover:bg-gray-700 relative group transition-colors duration-200"
+                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
               >
                 Restaurants
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 md:group-hover:scale-x-100"></span>
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </li>
             <li>
               <Link
                 href="/activities"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 dark:text-white dark:hover:bg-gray-700 relative group transition-colors duration-200"
+                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
               >
                 Activities
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 md:group-hover:scale-x-100"></span>
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </li>
             <li>
               <Link
                 href="/contact"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 dark:text-white dark:hover:bg-gray-700 relative group transition-colors duration-200"
+                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
               >
                 Contact
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 md:group-hover:scale-x-100"></span>
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </li>
           </ul>
