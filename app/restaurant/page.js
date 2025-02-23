@@ -97,7 +97,7 @@ const RestaurantsPage = () => {
           {/* Image supplémentaire en arrière-plan */}
           <img
             src="https://source.unsplash.com/random/800x600?food"
-            alt="Image de fond pour la phrase"
+            alt=""
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
           {/* Overlay sombre */}

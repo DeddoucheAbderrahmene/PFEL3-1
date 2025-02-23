@@ -11,10 +11,8 @@ export default function HotelsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Définir la phrase animée (en majuscules pour correspondre au style)
   const animatedPhrase = "TROUVER DES ACTIVITÉS OÙ QUE VOUS SOYEZ";
 
-  // Fonction pour générer la couleur d'ombre en fonction de la position de la lettre
   const getColor = (percentage) => {
     const colors = [
       { r: 0, g: 217, b: 255 },
@@ -61,11 +59,11 @@ export default function HotelsPage() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="bg-gray-50">
-        <div className="relative w-full h-[500px] overflow-hidden">
+      <main className="bg-gray-50 flex-grow">
+        <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] overflow-hidden">
           <img
             src="https://mariamhamli.files.wordpress.com/2015/11/cc.png"
             alt="Hôtel"
@@ -73,12 +71,11 @@ export default function HotelsPage() {
           />
           
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 px-4">
-            {/* Texte animé : chaque caractère est animé */}
-            <div className="relative flex justify-center whitespace-nowrap">
+            <div className="relative flex flex-wrap justify-center">
               {animatedPhrase.split("").map((char, i) => (
                 <span
                   key={i}
-                  className="font-bold text-white text-3xl md:text-4xl lg:text-5xl"
+                  className="font-bold text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
                   style={{
                     animation: `fadeInOut 2s ${i * 0.1}s infinite`,
                     textShadow: `0 0 10px ${getColor(i / (animatedPhrase.length - 1))},
@@ -92,9 +89,7 @@ export default function HotelsPage() {
             </div>
           </div>
 
-          {/* Formulaire de recherche */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 top-[70%] sm:top-auto sm:bottom-[-40px] z-20 w-[90%] max-w-3xl">
-            {/* ... (garder le même formulaire) */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-[80%] sm:top-auto sm:bottom-[-40px] z-20 w-[90%] max-w-3xl">{/* ... (garder le même formulaire) */}
           </div>
         </div>
 

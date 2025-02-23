@@ -16,20 +16,20 @@ const ActivityOfferCard = ({ activity }) => {
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
       <div className="relative h-48">
         <Image
-          src={activity.images || '/default-activity.jpg'}
+          src={activity.images}
           alt={activity.name}
           fill
           className="object-cover"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/default-activity.jpg';
+           
           }}
         />
         {calculateDiscount()}
       </div>
 
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-2">{activity.name}</h3>
+        <h3 className="text-xl font-bold mb-2 text-black">{activity.name}</h3>
         
         <div className="flex items-center gap-2 mb-3">
           <span className="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded">
