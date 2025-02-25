@@ -13,8 +13,13 @@ const AddRestaurantPage = () => {
     cuisine_type: '',
     description: '',
     phone_number: '',
+    email: '',
+    speciality: '',
     opening_hours: '',
-    star_rating: 3,
+    star_rating:'',
+    dress_code: '',
+    payment_methods: [],
+    additional_notes: ''
   });
   const [mainImage, setMainImage] = useState(null);
   const [menuImage, setMenuImage] = useState(null);
@@ -91,14 +96,15 @@ const AddRestaurantPage = () => {
   .from('restaurants')
   .insert([{
     ...formData,
-    owner_id: user.id, // Champ requis
+    owner_id: user.id,
     images: mainImageUrl,
     menu: menuImageUrl,
-    restaurant_id: crypto.randomUUID() // Génération côté client
+    status: 'pending', // Ajout du statut
+    restaurant_id: crypto.randomUUID()
   }]);
       if (dbError) throw dbError;
   
-      router.push('/restaurants');
+      router.push('/reject');
     } catch (err) {
       setError(err.message);
       console.error('Erreur complète :', err);
@@ -138,7 +144,136 @@ const AddRestaurantPage = () => {
           required
         />
       </div>
+      <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Email de contact
+    </label>
+    <input
+      type="email"
+      name="email"
+      value={formData.email}
+      onChange={handleInputChange}
+      className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 bg-white"
+    />
+  </div>
+{/* Horaires d'ouverture */}
+<div>
+   
+    <div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Horaires d'ouverture *
+  </label>
+  <textarea
+    name="opening_hours"
+    value={formData.opening_hours}
+    onChange={handleInputChange}
+    className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg 
+             focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+             transition-all text-gray-900 bg-white"
+    rows="4"
+    placeholder="Exemple : 
+Lundi: 11h30 - 14h30, 19h - 23h
+Mardi: Fermé
+Mercredi à Vendredi: 12h - 14h30, 19h - 00h
+Samedi-Dimanche: 11h - 00h"
+  />
+</div>
+  </div>
 
+  {/* Nombre d'étoiles */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Nombre d'étoiles (1-5)
+    </label>
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((rating) => (
+        <button
+          key={rating}
+          type="button"
+          onClick={() => setFormData({ ...formData, star_rating: rating })}
+          className={`text-3xl ${
+            rating <= formData.star_rating ? 'text-yellow-400' : 'text-gray-300'
+          } hover:text-yellow-500 transition-colors`}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+    </div>
+  {/* Spécialité */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Spécialité culinaire
+    </label>
+    <input
+      type="text"
+      name="speciality"
+      value={formData.speciality}
+      onChange={handleInputChange}
+      className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 bg-white"
+    />
+  </div>
+
+  {/* Code vestimentaire */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Code vestimentaire
+    </label>
+    <select
+      name="dress_code"
+      value={formData.dress_code}
+      onChange={handleInputChange}
+      className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 bg-white"
+    >
+      <option value="">Non spécifié</option>
+      <option value="Casual">Décontracté</option>
+      <option value="Smart Casual">Smart casual</option>
+      <option value="Formal">Formel</option>
+    </select>
+  </div>
+
+  {/* Moyens de paiement */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Moyens de paiement acceptés
+    </label>
+    <div className="grid grid-cols-2 gap-2 text-black">
+      {['Espèces', 'Carte bancaire', 'Mobile'].map((method) => (
+        <label key={method} className="flex items-center space-x-2 bg-gray-50 p-2 rounded">
+          <input
+            type="checkbox"
+            name="payment_methods"
+            value={method}
+            checked={formData.payment_methods.includes(method)}
+            onChange={(e) => {
+              const newMethods = e.target.checked
+                ? [...formData.payment_methods, e.target.value]
+                : formData.payment_methods.filter(m => m !== e.target.value);
+              setFormData({ ...formData, payment_methods: newMethods });
+            }}
+            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm">{method}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+
+  {/* Notes supplémentaires */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Informations complémentaires
+    </label>
+    <textarea
+      name="additional_notes"
+      value={formData.additional_notes}
+      onChange={handleInputChange}
+      className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 bg-white"
+      rows="3"
+      placeholder="Services spéciaux, restrictions alimentaires, etc."
+    />
+  </div>
+  
       {/* Image principale */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -17,20 +17,12 @@ const RestaurantsPage = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const { data, error } = await supabase
-          .from("restaurants")
-          .select(`
-            restaurant_id,
-            name,
-            location,
-            cuisine_type,
-            star_rating,
-            images,
-            description,
-            phone_number,
-            opening_hours
-          `)
-          .order("star_rating", { ascending: false });
+       // Dans votre page restaurants/page.jsx
+const { data, error } = await supabase
+.from('restaurants')
+.select('*')
+.eq('status', 'approved') // Seulement les approuvés
+.order('created_at', { ascending: false });
 
         if (error) throw error;
         setRestaurants(data);

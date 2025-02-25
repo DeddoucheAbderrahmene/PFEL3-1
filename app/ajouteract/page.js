@@ -26,6 +26,7 @@ export default function AddActivityPage() {
     language: 'Français',
     is_guided: false,
     location: '',
+    contact: '', // Nouveau champ pour le numéro du guide touristique
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -34,7 +35,7 @@ export default function AddActivityPage() {
   // Gérer les changements des champs du formulaire
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
@@ -42,7 +43,7 @@ export default function AddActivityPage() {
 
   // Gérer le changement de fichier pour l'image (uniquement une image)
   const handleImageChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: e.target.files[0],
     }));
@@ -118,7 +119,7 @@ export default function AddActivityPage() {
       setError(insertError.message);
     } else {
       setSuccess("L'activité a bien été enregistrée dans la base de données !");
-      // Optionnel : réinitialiser le formulaire après succès
+      // Réinitialiser le formulaire après succès
       setFormData({
         name: '',
         description: '',
@@ -136,6 +137,7 @@ export default function AddActivityPage() {
         language: 'Français',
         is_guided: false,
         location: '',
+        contact: '',
       });
     }
     setLoading(false);
@@ -336,6 +338,18 @@ export default function AddActivityPage() {
                 className="w-full p-2 border border-gray-400 rounded"
               />
             </div>
+            {/* Contact du guide touristique */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Contact du guide touristique</label>
+              <input
+                type="tel"
+                name="contact"
+                maxLength={10}
+                value={formData.contact}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-400 rounded"
+              />
+            </div>
             {/* Description */}
             <div className="col-span-full">
               <label className="block text-sm font-medium mb-2">Description</label>
@@ -356,7 +370,7 @@ export default function AddActivityPage() {
                 className="w-full p-2 border border-gray-400 rounded h-24"
               />
             </div>
-            {/* Images */}
+            {/* Image */}
             <div className="col-span-full">
               <label className="block text-sm font-medium mb-2">Image</label>
               <input

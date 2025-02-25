@@ -7,17 +7,38 @@ import { supabase } from '@/lib/supabase';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [userRole, setUserRole] = useState(null); // Nouvel état pour le rôle
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+    const fetchUserAndRole = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Récupération du rôle depuis la table users
+        const { data: userData } = await supabase
+          .from('users')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+          
+        if (userData) setUserRole(userData.role);
+      }
       setUser(user);
     };
 
-    fetchUser();
+    fetchUserAndRole();
     
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single();
+          
+        setUserRole(userData?.role);
+      }
       setUser(session?.user ?? null);
     });
 
@@ -122,19 +143,29 @@ const Header = () => {
               </button>
 
               {profileMenuOpen && (
-                <div 
-                  className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Déconnexion
-                  </button>
-                </div>
-              )}
+    <div 
+      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Ajout du lien Admin */}
+      {userRole === 'site_admin' && (
+        <Link 
+          href="./admin" 
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          onClick={() => setProfileMenuOpen(false)}
+        >
+          Administration
+        </Link>
+      )}
+     
+      <button
+        onClick={handleLogout}
+        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      >
+        Déconnexion
+      </button>
+    </div>
+  )}
             </div>
           ) : (
             <Link href="/auth" passHref>
