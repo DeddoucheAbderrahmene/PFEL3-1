@@ -21,8 +21,8 @@ const ActivityOfferCard = ({ activity }) => {
           fill
           className="object-cover"
           onError={(e) => {
+            
             e.target.onerror = null;
-           
           }}
         />
         {calculateDiscount()}
