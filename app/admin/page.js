@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import Header from '@/components/Header';
+import HeaderA from '@/components/HeaderA';
 
 const AdminRestaurantsPage = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -72,14 +72,14 @@ const handleApproval = async (id, status) => {
 
   if (loading) return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <HeaderA />
       <div className="text-center py-8">Vérification des permissions...</div>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <HeaderA />
       
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-black">
         <h1 className="text-2xl font-bold mb-6">Restaurants en attente de validation ({restaurants.length})</h1>

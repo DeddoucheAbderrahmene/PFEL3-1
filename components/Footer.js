@@ -56,14 +56,14 @@ export default function Footer() {
                   <a href="/AdminH" className="hover:underline">admin hotel</a>
                 </li>
                 <li className="mb-4">
-                  <a href="#" className="hover:underline">guide touristique</a>
+                  <a href="/ajouteract" className="hover:underline">guide touristique</a>
                 </li>
                 <li className="mb-4">
                   <a href="/ajouterRest" className="hover:underline">Ajouter un restaurant</a>
                 </li>
               
                 <li className="mb-4">
-                  <a href="/ajouteract" className="hover:underline">Ajouter une activité</a>
+                  <a href="/" className="hover:underline">Ajouter une activité</a>
                 </li>
               </ul>
             </div>

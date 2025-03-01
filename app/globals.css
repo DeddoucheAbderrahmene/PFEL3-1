@@ -39,3 +39,9 @@ body {
     overflow: hidden;
   }
 }
+/* globals.css */
+#extwaiokist {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
