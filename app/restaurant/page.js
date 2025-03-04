@@ -17,11 +17,10 @@ const RestaurantsPage = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-       // Dans votre page restaurants/page.jsx
 const { data, error } = await supabase
 .from('restaurants')
 .select('*')
-.eq('status', 'approved') // Seulement les approuvés
+.eq('status', 'approved')
 .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -61,8 +60,6 @@ const { data, error } = await supabase
         Erreur de chargement : {error}
       </div>
     );
-
-  // Filtrer les restaurants par nom ou location
   const filteredRestaurants = restaurants.filter((restaurant) => {
     const lowerSearch = searchTerm.toLowerCase();
     return (

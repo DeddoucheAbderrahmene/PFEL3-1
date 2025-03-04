@@ -46,52 +46,35 @@ const AddRestaurantPage = () => {
     setError('');
   
     try {
-      // Vérifier l'authentification
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       
       if (!user || authError) {
         throw new Error('Vous devez être connecté pour ajouter un restaurant');
       }
-  
-      // Validation
       if (!formData.name || !mainImage || !menuImage) {
         throw new Error('Tous les champs obligatoires doivent être remplis');
       }
-  
-      // Préparation du chemin de stockage
       const sanitizedName = sanitizeFileName(formData.name);
       const folderPath = `Restaurants_photos/${user.id}/${sanitizedName}/`;
-  
-      // Upload de l'image principale
       const mainExt = mainImage.name.split('.').pop();
       const mainImagePath = `${folderPath}main.${mainExt}`;
-      
       const { error: mainError } = await supabase.storage
         .from('Restaurants_photos')
         .upload(mainImagePath, mainImage);
-  
       if (mainError) throw new Error(`Erreur upload image : ${mainError.message}`);
-  
-      // Upload de l'image du menu
       const menuExt = menuImage.name.split('.').pop();
       const menuImagePath = `${folderPath}menu.${menuExt}`;
   
       const { error: menuError } = await supabase.storage
         .from('Restaurants_photos')
         .upload(menuImagePath, menuImage);
-  
       if (menuError) throw new Error(`Erreur upload menu : ${menuError.message}`);
-  
-      // Récupération des URLs
       const { data: { publicUrl: mainImageUrl } } = supabase.storage
         .from('Restaurants_photos')
         .getPublicUrl(mainImagePath);
-  
       const { data: { publicUrl: menuImageUrl } } = supabase.storage
         .from('Restaurants_photos')
         .getPublicUrl(menuImagePath);
-  
-      // Insertion dans la base de données
       const { error: dbError } = await supabase
   .from('restaurants')
   .insert([{
@@ -99,7 +82,7 @@ const AddRestaurantPage = () => {
     owner_id: user.id,
     images: mainImageUrl,
     menu: menuImageUrl,
-    status: 'pending', // Ajout du statut
+    status: 'pending', 
     restaurant_id: crypto.randomUUID()
   }]);
       if (dbError) throw dbError;

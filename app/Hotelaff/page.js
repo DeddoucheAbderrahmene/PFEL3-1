@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase"; // Import du client Supabase configuré
+import { supabase } from "@/lib/supabase";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Footer from "@/components/Footer";
@@ -28,7 +28,6 @@ function HotelaffContent() {
 
     async function fetchData() {
       try {
-        // Récupérer les détails de l'hôtel
         const { data: hotelData, error: hotelError } = await supabase
           .from("hotels")
           .select("*")
@@ -36,16 +35,12 @@ function HotelaffContent() {
           .single();
 
         if (hotelError) throw hotelError;
-
-        // Récupérer les offres associées à cet hôtel
         const { data: offersData, error: offersError } = await supabase
           .from("hotel_offers")
           .select("*")
           .eq("hotel_id", hotelId);
 
         if (offersError) throw offersError;
-
-        // Récupérer les services associés à cet hôtel
         const { data: servicesData, error: servicesError } = await supabase
           .from("hotel_services")
           .select("*")

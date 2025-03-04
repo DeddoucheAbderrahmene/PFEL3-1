@@ -5,14 +5,11 @@ import { supabase } from '@/lib/supabase';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityOfferCard from "@/components/ActivityOfferCard";
-
 export default function HotelsPage() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const animatedPhrase = "TROUVER DES ACTIVITÉS OÙ QUE VOUS SOYEZ";
-
   const getColor = (percentage) => {
     const colors = [
       { r: 0, g: 217, b: 255 },
@@ -24,7 +21,6 @@ export default function HotelsPage() {
     const { r, g, b } = colors[index];
     return `rgb(${r}, ${g}, ${b})`;
   };
-
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -69,7 +65,6 @@ export default function HotelsPage() {
             alt="Hôtel"
             className="absolute z-0 w-full h-full object-cover"
           />
-          
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 px-4">
             <div className="relative flex flex-wrap justify-center">
               {animatedPhrase.split("").map((char, i) => (
@@ -88,11 +83,9 @@ export default function HotelsPage() {
               ))}
             </div>
           </div>
-
           <div className="absolute left-1/2 transform -translate-x-1/2 top-[80%] sm:top-auto sm:bottom-[-40px] z-20 w-[90%] max-w-3xl">{/* ... (garder le même formulaire) */}
           </div>
         </div>
-
         <section className="px-6 py-16 mt-20">
           <div className="max-w-screen-xl mx-auto text-center">
             {loading ? (
@@ -112,8 +105,5 @@ export default function HotelsPage() {
           </div>
         </section>
       </main>
-
       <Footer />
-    </div>
-  );
-}
+    </div> );}

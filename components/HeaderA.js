@@ -89,7 +89,7 @@ const HeaderA = () => {
             TripDzAir ADMIN
           </span>
           <span className=" text-white font-mono uppercase text-xs">
-            <p>Devloper </p>
+            Devloper 
           </span>
         </Link>
 

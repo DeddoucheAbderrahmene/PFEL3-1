@@ -1,7 +1,6 @@
 "use client";
-
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase"; // Import du client configuré
+import { supabase } from "@/lib/supabase"; 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HotelOfferCard from "@/components/HotelOfferCard";

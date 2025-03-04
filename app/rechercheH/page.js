@@ -9,28 +9,19 @@ import HotelOfferCard from "@/components/HotelOfferCard";
 import HotelServiceCard from "@/components/HotelServiceCard";
 
 function RechercheHContent() {
-  // Récupération des paramètres dans l'URL
   const searchParams = useSearchParams();
   const destination = searchParams.get("destination") || "";
   const arrivalDate = searchParams.get("arrivalDate") || "";
-
-  // États pour les hôtels
   const [offers, setOffers] = useState([]);
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [errorOffers, setErrorOffers] = useState(null);
-
-  // États pour les services
   const [services, setServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [errorServices, setErrorServices] = useState(null);
-
-  // États pour les filtres avancés sur les hôtels
-  const [sortFilter, setSortFilter] = useState("none"); // "priceAsc", "priceDesc", "ratingAsc", "ratingDesc"
+  const [sortFilter, setSortFilter] = useState("none"); 
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [starRatings, setStarRatings] = useState([]); // Tableau des étoiles sélectionnées
-
-  // Récupération des hôtels dont la localisation correspond à la destination
+  const [starRatings, setStarRatings] = useState([]); 
   useEffect(() => {
     async function fetchOffers() {
       setLoadingOffers(true);
@@ -59,8 +50,6 @@ function RechercheHContent() {
       fetchOffers();
     }
   }, [destination]);
-
-  // Récupération des services associés aux hôtels (via la jointure sur la table hotels)
   useEffect(() => {
     async function fetchServices() {
       setLoadingServices(true);
@@ -86,18 +75,12 @@ function RechercheHContent() {
       fetchServices();
     }
   }, [destination]);
-
-  // Fonction utilitaire pour obtenir le prix minimum d'un hôtel (basé sur ses offres)
   const getMinPrice = (hotel) => {
     if (!hotel.hotel_offers || hotel.hotel_offers.length === 0) return Infinity;
     return Math.min(...hotel.hotel_offers.map((offer) => offer.price));
   };
-
-  // Application des filtres sur les hôtels
   const filteredOffers = useMemo(() => {
     let filtered = [...offers];
-
-    // Filtrage par plage de prix (basé sur le prix minimum de l'offre)
     if (priceMin !== "" || priceMax !== "") {
       filtered = filtered.filter((hotel) => {
         const minPrice = getMinPrice(hotel);
@@ -106,13 +89,9 @@ function RechercheHContent() {
         return true;
       });
     }
-
-    // Filtrage par note (si des étoiles sont sélectionnées)
     if (starRatings.length > 0) {
       filtered = filtered.filter((hotel) => starRatings.includes(hotel.star_rating));
     }
-
-    // Tri des résultats
     if (sortFilter === "priceAsc") {
       filtered.sort((a, b) => getMinPrice(a) - getMinPrice(b));
     } else if (sortFilter === "priceDesc") {

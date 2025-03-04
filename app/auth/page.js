@@ -3,23 +3,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import Header from "@/components/Header";  // Assurez-vous que ces chemins sont corrects
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
 export default function AuthPage() {
   const router = useRouter();
-
-  // États généraux
   const [isLogin, setIsLogin] = useState(true);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-
-  // Champs communs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Champs pour l'inscription
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -34,7 +27,6 @@ export default function AuthPage() {
     setForgotPassword(false);
     setErrorMsg("");
     setSuccessMsg("");
-    // Réinitialisation des champs
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -51,7 +43,7 @@ export default function AuthPage() {
     setForgotPassword(false);
     setErrorMsg("");
     setSuccessMsg("");
-    setEmail(""); // Réinitialiser l'email également
+    setEmail("");
     setPassword("");
   };
 
@@ -60,17 +52,14 @@ export default function AuthPage() {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
-
-    // Vérification commune
     if (!email || !password) {
       setErrorMsg("Veuillez fournir un email et un mot de passe.");
       return;
     }
 
     if (forgotPassword) {
-      // Réinitialisation du mot de passe
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + "/reset", // Assurez-vous d'avoir une page /reset
+        redirectTo: window.location.origin + "/reset", 
       });
       if (error) {
         setErrorMsg(error.message);
@@ -82,19 +71,18 @@ export default function AuthPage() {
 
 
     if (isLogin) {
-        // Connexion
+
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) {
           setErrorMsg(signInError.message);
-          return; // Important: Arrêter l'exécution si la connexion échoue.
+          return;
         }
-          // Si signInWithPassword réussit, l'utilisateur est connecté, donc on peut récupérer son ID
-          if (signInData && signInData.user) {
+           if (signInData && signInData.user) {
             const { data: userData, error: userError } = await supabase
                 .from("users")
-                .select("role") // Sélectionner uniquement le rôle
-                .eq("user_id", signInData.user.id) // Utiliser l'ID de l'utilisateur connecté
-                .single(); // S'assurer qu'on récupère un seul utilisateur.
+                .select("role") 
+                .eq("user_id", signInData.user.id) 
+                .single();
 
             if (userError) {
               setErrorMsg("Erreur lors de la récupération du rôle de l'utilisateur.");
@@ -102,14 +90,12 @@ export default function AuthPage() {
             }
 
           if (userData && userData.role === "hotel_admin") {
-                router.push("/AdminH"); // Redirection vers la page AdminH
+                router.push("/AdminH");
             } else {
-                router.push("/"); // Redirection vers la page d'accueil par défaut
+                router.push("/");
             }
         }
-
       } else {
-        // Inscription : Vérifier les champs requis
         if (!firstName || !lastName) {
           setErrorMsg("Veuillez fournir votre prénom et votre nom.");
           return;
@@ -122,8 +108,6 @@ export default function AuthPage() {
           setErrorMsg("Vous devez accepter les termes et conditions.");
           return;
         }
-
-        // Inscription avec Supabase Auth
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -135,7 +119,7 @@ export default function AuthPage() {
               nationality,
               address,
               phone_number: phoneNumber,
-              role: "visitor", // Par défaut, le rôle est "visitor"
+              role: "visitor",
             },
           },
         });
@@ -147,17 +131,12 @@ export default function AuthPage() {
         }
     }
   };
-
-
-  // Fonction pour la connexion Google
   const handleGoogleSignIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
     if (error) {
       setErrorMsg(error.message);
     }
   };
-
-    // Styles Tailwind pour le formulaire  (Ces styles n'ont pas été modifiés)
     const buttonStyle = "relative inline-flex w-full h-12 active:scale-95 transition-all duration-300 overflow-hidden rounded-lg p-[1px] focus:outline-none";
     const innerButtonStyle = (isSelected) =>
       `inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg px-6 py-3 text-sm font-medium backdrop-blur-3xl transition-all duration-200 ${isSelected

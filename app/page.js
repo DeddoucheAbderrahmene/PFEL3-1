@@ -1,20 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Importation du hook useRouter
-import { supabase } from "@/lib/supabase"; // Assurez-vous que le chemin est correct
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase"; 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Carousel from "@/components/Carousel";
 import HotelOfferCard from "@/components/HotelOfferCard";
-
-// Fonction pour obtenir la date actuelle au format YYYY-MM-DD
 const getCurrentDate = () => {
   const today = new Date();
-  return today.toISOString().split("T")[0]; // Format YYYY-MM-DD
+  return today.toISOString().split("T")[0]; 
 };
-
-// Liste des wilayas d'Algérie
 const wilayas = [
   "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra",
   "Béchar", "Blida", "Bouira", "Tamanrasset", "Tébessa", "Tlemcen", "Tiaret",
@@ -37,8 +33,6 @@ export default function Page() {
   const [isError, setIsError] = useState(false);
   const [arrivalDate, setArrivalDate] = useState(getCurrentDate());
   const [isDateError, setIsDateError] = useState(false);
-
-  // Récupérer les hôtels avec leur offre la plus basse et le rating
   useEffect(() => {
     const fetchHotels = async () => {
       const { data, error } = await supabase
@@ -70,8 +64,6 @@ export default function Page() {
 
     fetchHotels();
   }, []);
-
-  // Gestion de la saisie de la destination
   const handleInputChange = (e) => {
     const value = e.target.value;
     setDestination(value);
@@ -87,23 +79,17 @@ export default function Page() {
       setShowSuggestions(false);
     }
   };
-
-  // Sélectionner une suggestion
   const handleSuggestionClick = (wilaya) => {
     setDestination(wilaya);
     setSuggestions([]);
     setShowSuggestions(false);
     setIsError(false);
   };
-
-  // Gestion du changement de date
   const handleDateChange = (e) => {
     const selectedDate = e.target.value;
     setArrivalDate(selectedDate);
     setIsDateError(new Date(selectedDate) < new Date(getCurrentDate()));
   };
-
-  // Soumission du formulaire avec redirection vers la page rechercheH
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!wilayas.includes(destination)) {
@@ -111,7 +97,6 @@ export default function Page() {
       return;
     }
     if (isDateError) return;
-    // Redirection vers la page rechercheH avec les paramètres
     router.push(
       `/rechercheH?destination=${encodeURIComponent(
         destination

@@ -91,34 +91,14 @@ const HeaderAdminA = () => {
            <span className="self-center text-xl font-bold text-white tracking-wider font-mono uppercase">
             Admin 
           </span>
+          <span className=" text-white font-mono uppercase text-xs">
+            Activité
+          </span>
         </Link>
        
         <div className="flex md:order-2 space-x-2 items-center">
           {/* Icône Réservations */}
-          <Link
-            href="/reservations"
-            title="Mes réservations"
-            passHref
-            className="flex items-center justify-center p-0 text-white hover:bg-gray-700 rounded-full transition-colors duration-200"
-          >
-            <svg
-              className="w-6 h-6 text-gray-100"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 3v4a1 1 0 0 1-1 1H5m4 6 2 2 4-4m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"
-              />
-            </svg>
-          </Link>
+         
 
           {/* Gestion utilisateur */}
           {user ? (
@@ -210,37 +190,10 @@ const HeaderAdminA = () => {
           <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 md:flex-row md:mt-0 md:border-0">
             <li>
               <Link
-                href="/adminactivité"
+                href="/ajouteract"
                 className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
               >
                 Ajouter une activité
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
-              >
-                Gérer mes offres
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/restaurant"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
-              >
-                Restaurants
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/activities"
-                className="block py-2 px-3 md:p-0 text-white hover:text-gray-100 relative group transition-colors duration-200"
-              >
-                Activities
                 <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gray-100 origin-left transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </li>

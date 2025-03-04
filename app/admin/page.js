@@ -8,23 +8,18 @@ const AdminRestaurantsPage = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   useEffect(() => {
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      
-      // Vérification directe dans la table users
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('role')
         .eq('user_id', user?.id)
         .single();
-
       if (!userData || userError || userData.role !== 'site_admin') {
         window.location.href = '/';
       }
     };
-
     const fetchPendingRestaurants = async () => {
       try {
         const { data, error } = await supabase
@@ -40,13 +35,9 @@ const AdminRestaurantsPage = () => {
         setLoading(false);
       }
     };
-
     checkAdmin();
     fetchPendingRestaurants();
   }, []);
-
-
- // Dans votre page admin/restaurants/page.jsx
 const handleApproval = async (id, status) => {
     try {
       const { error } = await supabase
@@ -55,41 +46,32 @@ const handleApproval = async (id, status) => {
           status: status,
     
         })
-        .eq('restaurant_id', id); // Vérifiez que c'est bien le nom de colonne dans votre table
-  
+        .eq('restaurant_id', id); 
       if (error) {
         throw new Error(`Erreur de mise à jour : ${error.message}`);
       }
-      
-      // Rafraîchissement optimiste
       setRestaurants(prev => prev.filter(r => r.restaurant_id !== id));
-      
     } catch (err) {
       setError(err.message);
       console.error('Erreur complète:', err);
     }
   };
-
   if (loading) return (
     <div className="min-h-screen bg-gray-50">
       <HeaderA />
       <div className="text-center py-8">Vérification des permissions...</div>
     </div>
   );
-
   return (
     <div className="min-h-screen bg-gray-50">
       <HeaderA />
-      
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-black">
         <h1 className="text-2xl font-bold mb-6">Restaurants en attente de validation ({restaurants.length})</h1>
-        
         {error && (
           <div className="p-4 bg-red-100 text-red-700 rounded-lg mb-4">
             {error}
           </div>
         )}
-
         <div className="grid grid-cols-1 gap-4 text-black">
           {restaurants.map(restaurant => (
             <div key={restaurant.restaurant_id} className="bg-white p-6 rounded-lg shadow-md">
@@ -172,7 +154,6 @@ const handleApproval = async (id, status) => {
             </div>
           ))}
         </div>
-
         {restaurants.length === 0 && !loading && (
           <div className="text-center py-8 text-gray-500">
             Aucun restaurant en attente de validation

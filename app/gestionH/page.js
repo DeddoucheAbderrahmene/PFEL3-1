@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import HeaderAdminH from "@/components/HeaderAdminH";
 import Footer from "@/components/Footer";
-
-// Fonction d'upload d'image vers Supabase Storage (si vous utilisez un bucket "hotels-images")
 const uploadImage = async (hotelName, file) => {
   const fileExt = file.name.split('.').pop();
   const fileName = `${hotelName}-${Date.now()}.${fileExt}`;
-  const filePath = fileName; // Vous pouvez organiser le chemin comme vous le souhaitez
+  const filePath = fileName;
   const { data, error } = await supabase.storage
     .from('hotels-images')
     .upload(filePath, file);
@@ -20,8 +18,6 @@ const uploadImage = async (hotelName, file) => {
   }
   return data.path;
 };
-
-// Composant PopupMessage pour afficher les messages (succès ou échec)
 const PopupMessage = ({ message, onClose }) => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-xl shadow-lg max-w-md">
@@ -32,8 +28,6 @@ const PopupMessage = ({ message, onClose }) => (
     </div>
   </div>
 );
-
-// Formulaire pour créer ou modifier un hôtel
 const HotelFormModal = ({ hotel, onClose, onSubmit }) => {
   const [formData, setFormData] = useState(
     hotel || {
@@ -155,8 +149,6 @@ const HotelFormModal = ({ hotel, onClose, onSubmit }) => {
     </div>
   );
 };
-
-// Formulaire pour gérer les offres (hotel_offers)
 const HotelOfferFormModal = ({ hotelOffer, onClose, onSubmit }) => {
   const [formData, setFormData] = useState(
     hotelOffer || {
@@ -293,8 +285,6 @@ const HotelOfferFormModal = ({ hotelOffer, onClose, onSubmit }) => {
     </div>
   );
 };
-
-// Formulaire pour gérer les services (hotel_services)
 const ServiceFormModal = ({ service, onClose, onSubmit }) => {
   const [formData, setFormData] = useState(
     service || {
@@ -401,8 +391,6 @@ const GestionHPage = () => {
   const [user, setUser] = useState(null);
   const [popupMessage, setPopupMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
-
-  // États de contrôle des modales
   const [isOfferPopupOpen, setIsOfferPopupOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
   const [isHotelPopupOpen, setIsHotelPopupOpen] = useState(false);
@@ -418,8 +406,6 @@ const GestionHPage = () => {
         return;
       }
       setUser(user);
-
-      // Récupérer éventuellement un hôtel existant associé à l'admin
       const { data: hotelData } = await supabase
         .from("hotels")
         .select("*")

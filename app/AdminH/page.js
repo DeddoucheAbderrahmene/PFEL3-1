@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import HeaderAdminH from "@/components/HeaderAdminH";
 import Footer from "@/components/Footer";
-
-// Composant pour afficher un message popup
 const PopupMessage = ({ message, onClose }) => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-xl shadow-lg max-w-md">
@@ -26,15 +24,10 @@ const AdminH = () => {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-
   const [popupMessage, setPopupMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
-
-  // Pour modification d'une réservation
   const [isReservationPopupOpen, setIsReservationPopupOpen] = useState(false);
   const [editingReservation, setEditingReservation] = useState(null);
-
-  // Récupération de l'utilisateur et de l'hôtel associé
   useEffect(() => {
     const fetchUserAndHotel = async () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -54,7 +47,6 @@ const AdminH = () => {
         setHotels([]);
         setPopupMessage("Aucun hôtel associé n'a été trouvé. Veuillez créer un hôtel.");
         setShowPopup(true);
-        // Ici, vous pourriez déclencher l'ouverture d'un formulaire de création d'hôtel
       } else {
         setHotels([hotelData]);
       }
@@ -62,8 +54,6 @@ const AdminH = () => {
     };
     fetchUserAndHotel();
   }, [router]);
-
-  // Chargement des offres de l'hôtel
   useEffect(() => {
     if (hotels.length > 0) {
       const currentHotel = hotels[0];
@@ -83,8 +73,6 @@ const AdminH = () => {
       setOffers([]);
     }
   }, [hotels]);
-
-  // Chargement des services de l'hôtel
   useEffect(() => {
     if (hotels.length > 0) {
       const currentHotel = hotels[0];
@@ -104,8 +92,6 @@ const AdminH = () => {
       setServices([]);
     }
   }, [hotels]);
-
-  // Chargement des réservations liées aux offres et services de l'hôtel
   useEffect(() => {
     if (offers.length > 0 || services.length > 0) {
       const fetchReservations = async () => {
@@ -134,8 +120,6 @@ const AdminH = () => {
       setReservations([]);
     }
   }, [offers, services]);
-
-  // Modification d'une réservation
   const handleReservationSubmit = async (reservationData) => {
     if (editingReservation) {
       const { data, error } = await supabase
@@ -290,8 +274,6 @@ const ReservationFormModal = ({ reservation, onClose, onSubmit, offers, services
     e.preventDefault();
     onSubmit(formData);
   };
-
-  // Selon le type de réservation, les options proviennent des offres ou services
   const typeOptions = formData.reservation_type === "hotel_offer" ? offers : services;
 
   return (
