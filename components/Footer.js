@@ -61,10 +61,6 @@ export default function Footer() {
                 <li className="mb-4">
                   <a href="/ajouterRest" className="hover:underline">Ajouter un restaurant</a>
                 </li>
-              
-                <li className="mb-4">
-                  <a href="/" className="hover:underline">Ajouter une activité</a>
-                </li>
               </ul>
             </div>
             <div>

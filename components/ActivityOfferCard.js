@@ -1,8 +1,11 @@
 "use client";
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const ActivityOfferCard = ({ activity }) => {
+  const router = useRouter();
+
   const calculateDiscount = () => {
     if (!activity.discount_percentage) return null;
     return (
@@ -21,7 +24,6 @@ const ActivityOfferCard = ({ activity }) => {
           fill
           className="object-cover"
           onError={(e) => {
-            
             e.target.onerror = null;
           }}
         />
@@ -30,7 +32,7 @@ const ActivityOfferCard = ({ activity }) => {
 
       <div className="p-6">
         <h3 className="text-xl font-bold mb-2 text-black">{activity.name}</h3>
-        
+
         <div className="flex items-center gap-2 mb-3">
           <span className="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded">
             {activity.difficulty_level}
@@ -61,6 +63,12 @@ const ActivityOfferCard = ({ activity }) => {
             📅 {new Date(activity.start_date).toLocaleDateString()} - {new Date(activity.end_date).toLocaleDateString()}
           </span>
         </div>
+        <button
+          onClick={() => router.push(`/acitvityaff/${activity.tour_announcement_id}`)}
+          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+        >
+          Afficher les détails
+        </button>
       </div>
     </div>
   );
